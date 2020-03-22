@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>RedditClone Home</title>
+</head>
+<body>
+	{% extends 'base.html' %}
+	{% block content %}
+
+	{% if message %}
+	<div class="container alert alert-danger" style="opacity: 0.8;" role="alert"> 
+	{{ message }} 
+	</div>
+	{% endif %}
+	
+	<div class="container-fluid">
+		<h1>Welcome to RedditClone home</h1>
+		<br>
+		<a href="{% url 'posts:create' %}"><h2>Add new post</h2></a>
+		<hr>
+		{% for post in posts %}
+		<div class="row container">
+			<div class="col-sm-1 text-center">
+				<form id="increment-{{ post.id }}" method="POST" action="{% url 'posts:upvote' post.id %}">
+					{% csrf_token %}
+					<input type="hidden" name="up">
+				</form>
+				<i class="glyphicon glyphicon-triangle-top" style="position: relative; top: 20px; font-size: 140%;" onclick="document.getElementById('increment-{{ post.id }}').submit()"></i>
+
+				<h3>{{ post.votes }}</h3>
+
+				<form id="decrement-{{ post.id }}" method="POST" action="{% url 'posts:downvote' post.id %}">
+					{% csrf_token %}
+					<input type="hidden" name="down">
+				</form>
+				<i class="glyphicon glyphicon-triangle-bottom" style="position: relative; top: -5px; font-size: 140%;" onclick="document.getElementById('decrement-{{ post.id }}').submit()"></i>
+			</div>
+			<div class="col-md-10">
+				<a href="{{ post.link }}"><h3>{{ post.title }}</h3></a>
+				<h4> on {{ post.displaydate }} by <a href="{% url 'posts:userposts' post.author.id %}">{{ post.author }}</a></h4>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+
+	{% endblock %}
+
+</body>
+</html>
